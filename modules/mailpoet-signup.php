@@ -31,11 +31,9 @@ function wpcf7_mailpoetsignup_shortcode_handler( $tag ) {
 
 	$atts = array();
 
-	// TODO get MailPoet list
-	// TODO get checkbox select state
 	$atts['class'] = $tag->get_class_option( $class );
 	$atts['id'] = $tag->get_option( 'id', 'id', true );
-	$atts['tabindex'] = $tag->get_option( 'tabindex', 'int', true );
+	$atts['value'] = $tag->get_option( 'mailpoet_list', 'int', true );
 
 	if ( $tag->has_option( 'readonly' ) )
 		$atts['readonly'] = 'readonly';
@@ -115,24 +113,75 @@ function wpcf7_tg_pane_mailpoetsignup( &$contact_form ) {
 
 		<table>
 			<tr>
+				<td><code>mailpoet list</code> (<?php echo esc_html( __( 'required', 'wpcf7' ) ); ?>)<br />
+					<input type="text" name="mailpoet_list" class="mailpostlistvalue oneline option" />
+				</td>
+				<td></td>
+			</tr>
+			<tr>
 				<td><code>id</code> (<?php echo esc_html( __( 'optional', 'wpcf7' ) ); ?>)<br />
 					<input type="text" name="id" class="idvalue oneline option" />
 				</td>
-
 				<td><code>class</code> (<?php echo esc_html( __( 'optional', 'wpcf7' ) ); ?>)<br />
 					<input type="text" name="class" class="classvalue oneline option" />
 				</td>
 			</tr>
-
-			<!-- TODO add select box for MailPoet list selection -->
-
-
+			
 		</table>
 
-		<div class="tg-tag"><?php echo esc_html( __( "Copy this code and paste it into the form left.", 'wpcf7' ) ); ?><br /><input type="text" name="textarea" class="tag" readonly="readonly" onfocus="this.select()" /></div>
+		<div class="tg-tag"><?php echo esc_html( __( "Copy this code and paste it into the form left.", 'wpcf7' ) ); ?><br /><input type="text" name="mailpoetsignup" class="tag" readonly="readonly" onfocus="this.select()" /></div>
 
 		<div class="tg-mail-tag"><?php echo esc_html( __( "And, put this code into the Mail fields below.", 'wpcf7' ) ); ?><br /><span class="arrow">&#11015;</span>&nbsp;<input type="text" class="mail-tag" readonly="readonly" onfocus="this.select()" /></div>
 	</form>
 	</div>
 	<?php
 }
+
+/* Process the form field */
+
+add_action( 'wpcf7_before_send_mail', 'wpcf7_mailpoet_before_send_mail' );
+
+function wpcf7_mailpoet_before_send_mail( $contactform ) {
+	// make sure the user has Mailpoet (Wysija) installed & active
+	if ( ! ( class_exists( 'WYSIJA' ) ) )
+		return;
+
+	// and make sure they have something in their contact form
+	if ( empty( $contactform->posted_data ) || ! empty( $contactform->skip_mail ) )
+		return;
+
+	// set defaults for mailpoet user data
+	$user_data = array(
+		'email' => "",
+		'firstname' => "",
+		'lastname' => ""
+	);
+
+	// get form data
+	$posted_data = $contactform->posted_data;
+	$user_data['email'] = isset( $posted_data['your-email'] ) ? trim( $posted_data['your-email'] ) : '';
+	$user_data['firstname'] = isset( $posted_data['your-name'] ) ? trim( $posted_data['your-name'] ) : '';
+	if( isset( $posted_data['mailpoet-list'] ) ){
+		$mailpoet_list = trim( $posted_data['mailpoet-list'] );
+	}
+	
+	 // make sure we have a legitimate list
+	if( ( ! isset($mailpoet_list) ) || ( ! is_numeric( $mailpoet_list ) ) )
+		return;
+
+	// configure the list
+	$data = array(
+		'user' => $user_data,
+		'user_list' => array( 'list_ids' => array( $mailpoet_list ) )
+	);
+
+	// if akismet is set make sure it's valid
+	$akismet = isset( $contactform->akismet ) ? (array) $contactform->akismet : null;
+
+	// add the subscriber to the Wysija list
+	$userHelper=&WYSIJA::get('user','helper');
+	$userHelper->addSubscriber($data);
+
+}
+
+// that's all folks!
