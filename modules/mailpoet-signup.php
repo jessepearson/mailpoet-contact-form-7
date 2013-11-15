@@ -161,6 +161,12 @@ function wpcf7_mailpoet_before_send_mail( $contactform ) {
 	$posted_data = $contactform->posted_data;
 	$user_data['email'] = isset( $posted_data['your-email'] ) ? trim( $posted_data['your-email'] ) : '';
 	$user_data['firstname'] = isset( $posted_data['your-name'] ) ? trim( $posted_data['your-name'] ) : '';
+	if( isset( $posted_data['your-first-name'] ) && !empty( $posted_data['your-first-name'] ) ){
+		$user_data['firstname'] = trim( $posted_data['your-first-name'] );
+	}
+	if( isset( $posted_data['your-last-name'] ) && !empty( $posted_data['your-last-name'] ) ){
+		$user_data['lastname'] = trim( $posted_data['your-last-name'] );
+	}
 	if( isset( $posted_data['mailpoet-list'] ) ){
 		$mailpoet_list = trim( $posted_data['mailpoet-list'] );
 	}
