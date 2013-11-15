@@ -54,9 +54,16 @@ function wpcf7_mailpoetsignup_shortcode_handler( $tag ) {
 
 	$atts = wpcf7_format_atts( $atts );
 
+	// get the content from the tag to make the checkbox label
+	$label = __( 'Sign up for the newsletter', 'mpcf7' );
+	$values = $tag->values;
+	if( isset( $values ) && !empty ($values) ){
+		$label = $values[0];
+	}
+
 	$html = sprintf(
 		'<span class="wpcf7-form-control-wrap %1$s"><label for="%2$s">%3$s</label><input type="checkbox" %4$s />%5$s</span>',
-		$tag->name, $tag->name, $tag->name, $atts, esc_textarea( $value ), $validation_error );
+		$tag->name, $tag->name, esc_textarea( $value ), $atts, $validation_error );
 
 	return $html;
 }
@@ -104,19 +111,28 @@ function wpcf7_tg_pane_mailpoetsignup( &$contact_form ) {
 	<form action="">
 		<table>
 			<tr>
-				<td><input type="checkbox" name="required" />&nbsp;<?php echo esc_html( __( 'Required field?', 'wpcf7' ) ); ?></td>
+				<td>
+					<input type="checkbox" name="required" />&nbsp;<?php echo esc_html( __( 'Required field?', 'wpcf7' ) ); ?>
+				</td>
 			</tr>
 			<tr>
-				<td><?php echo esc_html( __( 'Name', 'wpcf7' ) ); ?><br /><input type="text" name="name" class="tg-name oneline" /></td><td></td>
+				<td>
+					<?php echo esc_html( __( 'Name', 'wpcf7' ) ); ?><br /><input type="text" name="name" class="tg-name oneline" />
+				</td>
+				<td></td>
 			</tr>
 		</table>
 
 		<table>
 			<tr>
-				<td><code>mailpoet list</code> (<?php echo esc_html( __( 'required', 'wpcf7' ) ); ?>)<br />
+				<td>
+					<code>mailpoet list</code> (<?php echo esc_html( __( 'required', 'wpcf7' ) ); ?>)<br />
 					<input type="text" name="mailpoet_list" class="mailpostlistvalue oneline option" />
 				</td>
-				<td></td>
+				<td>
+					<code>checkbox label</code> <br />
+					<textarea name="values"></textarea>
+				</td>
 			</tr>
 			<tr>
 				<td><code>id</code> (<?php echo esc_html( __( 'optional', 'wpcf7' ) ); ?>)<br />
