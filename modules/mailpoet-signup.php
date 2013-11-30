@@ -12,8 +12,10 @@
 add_action( 'init', 'wpcf7_add_shortcode_mailpoetsignup', 5 );
 
 function wpcf7_add_shortcode_mailpoetsignup() {
-	wpcf7_add_shortcode( array( 'mailpoetsignup', 'mailpoetsignup*' ),
-		'wpcf7_mailpoetsignup_shortcode_handler', true );
+	if( function_exists('wpcf7_add_shortcode') ) {
+		wpcf7_add_shortcode( array( 'mailpoetsignup', 'mailpoetsignup*' ),
+			'wpcf7_mailpoetsignup_shortcode_handler', true );
+	}
 }
 
 function wpcf7_mailpoetsignup_shortcode_handler( $tag ) {
