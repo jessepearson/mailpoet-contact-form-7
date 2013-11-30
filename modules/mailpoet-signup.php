@@ -128,7 +128,7 @@ function wpcf7_tg_pane_mailpoetsignup( &$contact_form ) {
 		<table>
 			<tr>
 				<td>
-					<code>mailpoet list</code> (<?php echo esc_html( __( 'required', 'wpcf7' ) ); ?>)<br />
+					<code>mailpoet list id</code> (<?php echo esc_html( __( 'required', 'wpcf7' ) ); ?>)<br />
 					<input type="text" name="mailpoet_list" class="mailpostlistvalue oneline option" />
 				</td>
 				<td>
