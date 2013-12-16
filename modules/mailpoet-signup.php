@@ -64,7 +64,7 @@ function wpcf7_mailpoetsignup_shortcode_handler( $tag ) {
 	}
 
 	$html = sprintf(
-		'<span class="wpcf7-form-control-wrap %1$s"><label for="%2$s">%3$s</label><input type="checkbox" %4$s />%5$s</span>',
+		'<span class="wpcf7-form-control-wrap %1$s"><input type="checkbox" %2$s />&nbsp;%3$s</span><label for="%4$s">%5$s</label>',
 		$tag->name, $tag->name, esc_textarea( $value ), $atts, $validation_error );
 
 	return $html;
