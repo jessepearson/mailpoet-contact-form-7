@@ -43,6 +43,12 @@ function wpcf7_mailpoetsignup_shortcode_handler( $tag ) {
 	if ( $tag->is_required() )
 		$atts['aria-required'] = 'true';
 
+	// set default checked state
+	$atts['checked'] = "";
+	if ( $tag->has_option( 'default:on' ) ) {
+		$atts['checked'] = 'checked';
+	}
+
 	$value = (string) reset( $tag->values );
 
 	if ( '' !== $tag->content )
@@ -52,7 +58,8 @@ function wpcf7_mailpoetsignup_shortcode_handler( $tag ) {
 		$value = stripslashes_deep( $_POST[$tag->name] );
 
 	$atts['name'] = $tag->name;
-	$atts['id'] = $atts['name'];
+	$id = $atts['id'] = $atts['name'];
+	// print_r($atts['id']);exit();
 
 	$atts = wpcf7_format_atts( $atts );
 
@@ -60,12 +67,12 @@ function wpcf7_mailpoetsignup_shortcode_handler( $tag ) {
 	$label = __( 'Sign up for the newsletter', 'mpcf7' );
 	$values = $tag->values;
 	if( isset( $values ) && !empty ($values) ){
-		$label = $values[0];
+		$label = esc_textarea( $values[0] );
 	}
 
 	$html = sprintf(
-		'<span class="wpcf7-form-control-wrap %1$s"><input type="checkbox" %2$s />&nbsp;%3$s</span><label for="%4$s">%5$s</label>',
-		$tag->name, $tag->name, esc_textarea( $value ), $atts, $validation_error );
+		'<span class="wpcf7-form-control-wrap %1$s"><input type="checkbox" %2$s />&nbsp;</span><label for="%3$s">%4$s</label>&nbsp;%5$s',
+		$tag->name, $atts, $id, $value, $validation_error );
 
 	return $html;
 }
@@ -129,7 +136,9 @@ function wpcf7_tg_pane_mailpoetsignup( &$contact_form ) {
 			<tr>
 				<td>
 					<code>mailpoet list id</code> (<?php echo esc_html( __( 'required', 'wpcf7' ) ); ?>)<br />
-					<input type="text" name="mailpoet_list" class="mailpostlistvalue oneline option" />
+					<input type="text" name="mailpoet_list" class="mailpostlistvalue oneline option" /><br /><br />
+					<code>checked by default (opt-in)</code><br />
+					<input type="checkbox" name="default:on" class="option" />&nbsp;<?php echo esc_html( __( "Make this checkbox checked by default?", 'contact-form-7' ) ); ?>
 				</td>
 				<td>
 					<code>checkbox label</code> <br />
