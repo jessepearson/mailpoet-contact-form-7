@@ -21,15 +21,17 @@ function wpcf7_add_shortcode_mailpoetsignup() {
 function wpcf7_mailpoetsignup_shortcode_handler( $tag ) {
 	$tag = new WPCF7_Shortcode( $tag );
 
-	if ( empty( $tag->name ) )
+	if ( empty( $tag->name ) ) {
 		return '';
+	}
 
 	$validation_error = wpcf7_get_validation_error( $tag->name );
 
 	$class = wpcf7_form_controls_class( $tag->type );
 
-	if ( $validation_error )
+	if ( $validation_error ) {
 		$class .= ' wpcf7-not-valid';
+	}
 
 	$atts = array();
 
@@ -110,8 +112,9 @@ function wpcf7_mailpoetsignup_validation_filter( $result, $tag ) {
 add_action( 'admin_init', 'wpcf7_add_tag_generator_mailpoetsignup', 20 );
 
 function wpcf7_add_tag_generator_mailpoetsignup() {
-	if ( ! function_exists( 'wpcf7_add_tag_generator' ) )
+	if ( ! function_exists( 'wpcf7_add_tag_generator' ) ) {
 		return;
+	}
 
 	wpcf7_add_tag_generator( 'mailpoetsignup', __( 'Mailpoet Signup', 'mpcf7' ),
 		'wpcf7-tg-pane-mailpoetsignup', 'wpcf7_tg_pane_mailpoetsignup' );
@@ -173,12 +176,14 @@ add_action( 'wpcf7_before_send_mail', 'wpcf7_mailpoet_before_send_mail' );
 
 function wpcf7_mailpoet_before_send_mail( $contactform ) {
 	// make sure the user has Mailpoet (Wysija) installed & active
-	if ( ! ( class_exists( 'WYSIJA' ) ) )
+	if ( ! ( class_exists( 'WYSIJA' ) ) ) {
 		return;
+	}
 
 	// and make sure they have something in their contact form
-	if ( empty( $contactform->posted_data ) || ! empty( $contactform->skip_mail ) )
+	if ( empty( $contactform->posted_data ) || ! empty( $contactform->skip_mail ) ) {
 		return;
+	}
 
 	// set defaults for mailpoet user data
 	$user_data = array(
@@ -191,19 +196,20 @@ function wpcf7_mailpoet_before_send_mail( $contactform ) {
 	$posted_data = $contactform->posted_data;
 	$user_data['email'] = isset( $posted_data['your-email'] ) ? trim( $posted_data['your-email'] ) : '';
 	$user_data['firstname'] = isset( $posted_data['your-name'] ) ? trim( $posted_data['your-name'] ) : '';
-	if( isset( $posted_data['your-first-name'] ) && !empty( $posted_data['your-first-name'] ) ){
+	if( isset( $posted_data['your-first-name'] ) && !empty( $posted_data['your-first-name'] ) ) {
 		$user_data['firstname'] = trim( $posted_data['your-first-name'] );
 	}
-	if( isset( $posted_data['your-last-name'] ) && !empty( $posted_data['your-last-name'] ) ){
+	if( isset( $posted_data['your-last-name'] ) && !empty( $posted_data['your-last-name'] ) ) {
 		$user_data['lastname'] = trim( $posted_data['your-last-name'] );
 	}
-	if( isset( $posted_data['mailpoet-list'] ) ){
+	if( isset( $posted_data['mailpoet-list'] ) ) {
 		$mailpoet_list = trim( $posted_data['mailpoet-list'] );
 	}
 	
 	 // make sure we have a legitimate list
-	if( ( ! isset($mailpoet_list) ) || ( ! is_numeric( $mailpoet_list ) ) )
+	if( ( ! isset($mailpoet_list) ) || ( ! is_numeric( $mailpoet_list ) ) ) {
 		return;
+	}
 
 	// configure the list
 	$data = array(
