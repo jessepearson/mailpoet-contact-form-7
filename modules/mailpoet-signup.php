@@ -39,10 +39,6 @@ function wpcf7_mailpoetsignup_shortcode_handler( $tag ) {
 	$atts['id'] = $tag->get_option( 'id', 'id', true );
 	$atts['value'] = $tag->get_option( 'mailpoet_list', 'int', true );
 
-	if ( $tag->has_option( 'readonly' ) ) {
-		$atts['readonly'] = 'readonly';
-	}
-
 	if ( $tag->is_required() ) {
 		$atts['aria-required'] = 'true';
 	}
