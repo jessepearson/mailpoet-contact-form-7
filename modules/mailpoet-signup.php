@@ -37,11 +37,13 @@ function wpcf7_mailpoetsignup_shortcode_handler( $tag ) {
 	$atts['id'] = $tag->get_option( 'id', 'id', true );
 	$atts['value'] = $tag->get_option( 'mailpoet_list', 'int', true );
 
-	if ( $tag->has_option( 'readonly' ) )
+	if ( $tag->has_option( 'readonly' ) ) {
 		$atts['readonly'] = 'readonly';
+	}
 
-	if ( $tag->is_required() )
+	if ( $tag->is_required() ) {
 		$atts['aria-required'] = 'true';
+	}
 
 	// set default checked state
 	$atts['checked'] = "";
@@ -51,15 +53,16 @@ function wpcf7_mailpoetsignup_shortcode_handler( $tag ) {
 
 	$value = (string) reset( $tag->values );
 
-	if ( '' !== $tag->content )
+	if ( '' !== $tag->content ) {
 		$value = $tag->content;
+	}
 
-	if ( wpcf7_is_posted() && isset( $_POST[$tag->name] ) )
+	if ( wpcf7_is_posted() && isset( $_POST[$tag->name] ) ) {
 		$value = stripslashes_deep( $_POST[$tag->name] );
+	}
 
 	$atts['name'] = $tag->name;
 	$id = $atts['id'] = $atts['name'];
-	// print_r($atts['id']);exit();
 
 	$atts = wpcf7_format_atts( $atts );
 
