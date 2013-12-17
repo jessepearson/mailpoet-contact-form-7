@@ -12,3 +12,23 @@ Version: 1.0.0
 
 // require the mailpoet signup field module
 require 'modules/mailpoet-signup.php';
+
+
+/**
+ * Get an array of MailPoet lists
+ *
+ * @return mixed
+ */
+function wpcf7_mailpoetsignup_get_lists() {
+
+	// make sure we have the class loaded
+	if ( ! ( class_exists( 'WYSIJA' ) ) ) {
+		return;
+	}
+
+	// get MailPoet / Wysija lists
+	$model_list = WYSIJA::get('list','model');
+	$mailpoet_lists = $model_list->get( array( 'name', 'list_id' ), array( 'is_enabled'=>1 ) );
+
+	return $mailpoet_lists;
+}

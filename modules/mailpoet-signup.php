@@ -137,8 +137,12 @@ function wpcf7_tg_pane_mailpoetsignup( &$contact_form ) {
 		<table>
 			<tr>
 				<td>
-					<code>mailpoet list id</code> (<?php echo esc_html( __( 'required', 'wpcf7' ) ); ?>)<br />
-					<input type="text" name="mailpoet_list" class="mailpostlistvalue oneline option" /><br /><br />
+					<code>MailPoet Lists</code><br />
+					<?php
+					// print mailpoet lists
+					echo wpcf7_mailpoetsignup_get_list_inputs(); 
+					?>
+					<br />
 					<code>checked by default (opt-in)</code><br />
 					<input type="checkbox" name="default:on" class="option" />&nbsp;<?php echo esc_html( __( "Make this checkbox checked by default?", 'contact-form-7' ) ); ?>
 				</td>
@@ -192,25 +196,35 @@ function wpcf7_mailpoet_before_send_mail( $contactform ) {
 	$posted_data = $contactform->posted_data;
 	$user_data['email'] = isset( $posted_data['your-email'] ) ? trim( $posted_data['your-email'] ) : '';
 	$user_data['firstname'] = isset( $posted_data['your-name'] ) ? trim( $posted_data['your-name'] ) : '';
-	if( isset( $posted_data['your-first-name'] ) && !empty( $posted_data['your-first-name'] ) ) {
+	if ( isset( $posted_data['your-first-name'] ) && !empty( $posted_data['your-first-name'] ) ) {
 		$user_data['firstname'] = trim( $posted_data['your-first-name'] );
 	}
-	if( isset( $posted_data['your-last-name'] ) && !empty( $posted_data['your-last-name'] ) ) {
+	if ( isset( $posted_data['your-last-name'] ) && !empty( $posted_data['your-last-name'] ) ) {
 		$user_data['lastname'] = trim( $posted_data['your-last-name'] );
 	}
-	if( isset( $posted_data['mailpoet-list'] ) ) {
-		$mailpoet_list = trim( $posted_data['mailpoet-list'] );
+
+	// get names of posted mailpoet lists
+	$mailpoet_lists = array();
+	$lists = wpcf7_mailpoetsignup_get_list_input_posted_names();
+	if ( ! empty ( $lists ) ) {
+		foreach ( $lists as $key => $l ) {
+			if ( isset( $posted_data[$l] ) ) {
+				// get the list id out of the input name
+				$id = substr( $l, 13);
+				$mailpoet_lists[] = $id;
+			}
+		}
 	}
 	
-	 // make sure we have a legitimate list
-	if( ( ! isset($mailpoet_list) ) || ( ! is_numeric( $mailpoet_list ) ) ) {
+	// make sure we have a legitimate list
+	if ( ( ! empty( $mailpoet_lists ) ) ) {
 		return;
 	}
 
 	// configure the list
 	$data = array(
 		'user' => $user_data,
-		'user_list' => array( 'list_ids' => array( $mailpoet_list ) )
+		'user_list' => array( 'list_ids' => $mailpoet_lists )
 	);
 
 	// if akismet is set make sure it's valid
@@ -221,5 +235,65 @@ function wpcf7_mailpoet_before_send_mail( $contactform ) {
 	$userHelper->addSubscriber($data);
 
 }
+
+
+/**
+ * Create a formatted list of input's for the CF7 tag generator
+ *
+ * @return string
+ */
+function wpcf7_mailpoetsignup_get_list_inputs ( ) {
+
+	$html = '';
+
+	// get lists
+	$lists = wpcf7_mailpoetsignup_get_lists();
+
+	if ( is_array( $lists ) && ! empty( $lists ) ) {
+		foreach ( $lists as $key => $l ) {
+			// add input to returned html
+			$input_name = wpcf7_mailpoetsignup_get_list_input_field_name();
+			$input = "<input type='checkbox' name='" . $input_name . "' class='option' />%s<br />";
+			$html .= sprintf( $input, $l['list_id'], $l['name'] ); 
+		}
+	}
+
+	return $html;
+}
+
+
+/**
+ * Create a list of posted list inputs so we can loop through them when processing posted data
+ *
+ * @return string
+ */
+function wpcf7_mailpoetsignup_get_list_input_posted_names ( ) {
+
+	// get posted lists
+	$posted_lists = array();
+
+	// get lists
+	$lists = wpcf7_mailpoetsignup_get_lists();
+
+	if ( is_array( $lists ) && ! empty( $lists ) ) {
+		foreach ( $lists as $key => $l ) {
+			// add input name to array that we return 
+			array_push( $posted_lists, wpcf7_mailpoetsignup_get_list_input_field_name() );
+		}
+	}
+
+	return $posted_lists;
+}
+
+
+/**
+ * Create input name for both the form processing & tag generation
+ *
+ * @return string
+ */
+function wpcf7_mailpoetsignup_get_list_input_field_name ( ) {
+	return 'mailpoet_list_%d';
+}
+
 
 // that's all folks!
