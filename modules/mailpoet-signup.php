@@ -37,7 +37,30 @@ function wpcf7_mailpoetsignup_shortcode_handler( $tag ) {
 
 	$atts['class'] = $tag->get_class_option( $class );
 	$atts['id'] = $tag->get_option( 'id', 'id', true );
-	$atts['value'] = $tag->get_option( 'mailpoet_list', 'int', true );
+
+	// get checkbox value 
+	// first get all of the lists
+	$lists = wpcf7_mailpoetsignup_get_lists();
+	if ( ! empty ( $lists ) ) {
+		$checkbox_values = array();
+		foreach ( $lists as $key => $l ) {
+			// check if that list was added to the form
+			if ( $tag->has_option( 'mailpoet_list_' . $l['list_id'] ) ) {
+				// add the list id into the array of checkbox values
+				$checkbox_values[] = $l['list_id'];
+			}
+		}
+	}
+
+	// we still want a value for the checkbox so *some* data gets posted
+	if ( ! empty ( $checkbox_values ) ) {
+		// now implode them all into a comma separated string
+		$atts['value'] = implode( $checkbox_values, "," );
+	} else {
+		// set a 0 so we know to add the user to Mailpoet but not to any specific list
+		$atts['value'] = "0";
+	}
+	
 
 	if ( $tag->is_required() ) {
 		$atts['aria-required'] = 'true';
@@ -203,22 +226,11 @@ function wpcf7_mailpoet_before_send_mail( $contactform ) {
 		$user_data['lastname'] = trim( $posted_data['your-last-name'] );
 	}
 
-	// get names of posted mailpoet lists
-	$mailpoet_lists = array();
-	$lists = wpcf7_mailpoetsignup_get_list_input_posted_names();
-	if ( ! empty ( $lists ) ) {
-		foreach ( $lists as $key => $l ) {
-			if ( isset( $posted_data[$l] ) ) {
-				// get the list id out of the input name
-				$id = substr( $l, 13);
-				$mailpoet_lists[] = $id;
-			}
-		}
-	}
-	
-	// make sure we have a legitimate list
-	if ( ( ! empty( $mailpoet_lists ) ) ) {
-		return;
+	if ( isset( $posted_data['mailpoetsignup'] ) && ! empty( $posted_data['mailpoetsignup'] ) ) {
+		$mailpoet_lists = explode( ",", $posted_data['mailpoetsignup'] );
+	} else {
+		// FYI an empty array is there just to add the user to MailPoet but not to any specific list
+		$mailpoet_lists = array();
 	}
 
 	// configure the list
@@ -259,30 +271,6 @@ function wpcf7_mailpoetsignup_get_list_inputs ( ) {
 	}
 
 	return $html;
-}
-
-
-/**
- * Create a list of posted list inputs so we can loop through them when processing posted data
- *
- * @return string
- */
-function wpcf7_mailpoetsignup_get_list_input_posted_names ( ) {
-
-	// get posted lists
-	$posted_lists = array();
-
-	// get lists
-	$lists = wpcf7_mailpoetsignup_get_lists();
-
-	if ( is_array( $lists ) && ! empty( $lists ) ) {
-		foreach ( $lists as $key => $l ) {
-			// add input name to array that we return 
-			array_push( $posted_lists, wpcf7_mailpoetsignup_get_list_input_field_name() );
-		}
-	}
-
-	return $posted_lists;
 }
 
 
