@@ -4,7 +4,7 @@ Donate link: http://www.patrickrauland.com
 Tags: form, forms, contact form, mailpoet, wysija, contact form 7, newsletters, email
 Requires at least: 3.7.1
 Tested up to: 3.7.1
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 
 License: GPLv2 or later
 
@@ -13,9 +13,16 @@ License: GPLv2 or later
 
 MailPoet is a free newsletter and post notification plugin for WordPress that makes it really simple to send out email newsletters to your subscription lists. This plugin integrates Contact Form 7 with MailPoet by providing an option for your customers to signup for your newsletter lists while submitting a form.
 
+Please see the extensive installation / setup instructions to set up your form correctly.
+
+Feel free to add feature requests or bugs to [our GitHub page](https://github.com/BFTrick/mailpoet-contact-form-7). Support requests should go in the support forum.
+
 = Features =
 
 * Allow your users to sign up for a Mailpoet newsletter list using a Contact Form 7 form
+* You can capture first name, last name, and (of course) email
+* You can signup users to as many lists as you like
+* You can set up the form to opt in or opt out
 
 
 == Installation ==
@@ -23,11 +30,32 @@ MailPoet is a free newsletter and post notification plugin for WordPress that ma
 This section describes how to install the plugin and get it working.
 
 1. Upload the `mailpoet-contact-form-7` directory to your `/wp-content/plugins/` directory
-2. Activate the plugin through the 'Plugins' menu in WordPress
-3. When you're setting up your form make sure you include the `MailPoet Signup` field
+1. Activate the plugin through the 'Plugins' menu in WordPress
+
+= Form Setup = 
+
+After installing & activating the plugin it's time to set up your form.
+
+1. Click on Contact in the WordPress admin
+1. Edit an existing form or create a new one by clicking on Add New in the WordPress admin menu
+1. Add your fields
+1. Add a text field named `your-name`
+1. Add an email field named `your-email`
+1. Add a MailPoet Signup field named `mailpoetsignup`
+1. When you're adding the MailPoet Signup field you can select any number of lists you want the user to be assigned to
+1. You can also choose to make the user opt in or opt out
+
+
+== Screenshots ==
+
+1. A sample Contact Form 7 form all ready to go.
+1. A view of the MailPoet Signup Tag Generator
 
 
 == Changelog ==
+
+= 1.0.1 =
+* Tweak - Adding screenshots
 
 = 1.0.0 =
 * Initial release
