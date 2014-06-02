@@ -38,7 +38,7 @@ function wpcf7_mailpoetsignup_shortcode_handler( $tag ) {
 	$atts['class'] = $tag->get_class_option( $class );
 	$atts['id'] = $tag->get_option( 'id', 'id', true );
 
-	// get checkbox value 
+	// get checkbox value
 	// first get all of the lists
 	$lists = wpcf7_mailpoetsignup_get_lists();
 	if ( ! empty ( $lists ) ) {
@@ -60,7 +60,7 @@ function wpcf7_mailpoetsignup_shortcode_handler( $tag ) {
 		// set a 0 so we know to add the user to Mailpoet but not to any specific list
 		$atts['value'] = "0";
 	}
-	
+
 
 	if ( $tag->is_required() ) {
 		$atts['aria-required'] = 'true';
@@ -163,7 +163,7 @@ function wpcf7_tg_pane_mailpoetsignup( &$contact_form ) {
 					<code>MailPoet Lists</code><br />
 					<?php
 					// print mailpoet lists
-					echo wpcf7_mailpoetsignup_get_list_inputs(); 
+					echo wpcf7_mailpoetsignup_get_list_inputs();
 					?>
 					<br />
 					<code>checked by default (opt-in)</code><br />
@@ -182,7 +182,7 @@ function wpcf7_tg_pane_mailpoetsignup( &$contact_form ) {
 					<input type="text" name="class" class="classvalue oneline option" />
 				</td>
 			</tr>
-			
+
 		</table>
 
 		<div class="tg-tag"><?php echo esc_html( __( "Copy this code and paste it into the form left.", 'wpcf7' ) ); ?><br /><input type="text" name="mailpoetsignup" class="tag" readonly="readonly" onfocus="this.select()" /></div>
@@ -226,12 +226,20 @@ function wpcf7_mailpoet_before_send_mail( $contactform ) {
 		$user_data['lastname'] = trim( $posted_data['your-last-name'] );
 	}
 
-	if ( isset( $posted_data['mailpoetsignup'] ) && ! empty( $posted_data['mailpoetsignup'] ) ) {
-		$mailpoet_lists = explode( ",", $posted_data['mailpoetsignup'] );
+        // find all of the keys in $posted_data that belong to mailpoet-cf7's plugin
+        $keys = array_keys($posted_data);
+        $mailpoet_signups = preg_grep("/^mailpoetsignup.*/", $keys);
+        $mailpoet_lists = array();
+	if ( ! empty( $mailpoet_signups ) ) {
+                foreach($mailpoet_signups as $mailpoet_signup_field){
+                    $mailpoet_lists = array_unique( array_merge( $mailpoet_lists, explode( ",", $posted_data[$mailpoet_signup_field] ) ) );
+                }
+
 	} else {
 		// FYI an empty array is there just to add the user to MailPoet but not to any specific list
 		$mailpoet_lists = array();
 	}
+
 
 	// configure the list
 	$data = array(
@@ -266,7 +274,7 @@ function wpcf7_mailpoetsignup_get_list_inputs ( ) {
 			// add input to returned html
 			$input_name = wpcf7_mailpoetsignup_get_list_input_field_name();
 			$input = "<input type='checkbox' name='" . $input_name . "' class='option' />%s<br />";
-			$html .= sprintf( $input, $l['list_id'], $l['name'] ); 
+			$html .= sprintf( $input, $l['list_id'], $l['name'] );
 		}
 	}
 

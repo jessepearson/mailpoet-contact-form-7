@@ -4,7 +4,7 @@ Donate link: http://www.patrickrauland.com
 Tags: form, forms, contact form, mailpoet, wysija, contact form 7, newsletters, email
 Requires at least: 3.7.1
 Tested up to: 3.7.1
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 
 License: GPLv2 or later
 
@@ -32,7 +32,7 @@ This section describes how to install the plugin and get it working.
 1. Upload the `mailpoet-contact-form-7` directory to your `/wp-content/plugins/` directory
 1. Activate the plugin through the 'Plugins' menu in WordPress
 
-= Form Setup = 
+= Form Setup =
 
 After installing & activating the plugin it's time to set up your form.
 
@@ -53,6 +53,9 @@ After installing & activating the plugin it's time to set up your form.
 
 
 == Changelog ==
+
+= 1.0.2 =
+* Fixed subscribers not being subscribed in the latest version 3.8.1 of CF7 
 
 = 1.0.1 =
 * Tweak - Adding screenshots
