@@ -7,11 +7,11 @@ Author: Patrick Rauland
 Author URI: http://www.patrickrauland.com/
 Text Domain: mpcf7
 Domain Path: /languages/
-Version: 1.0.1
+Version: 1.0.2
 */
 
 // require the mailpoet signup field module
-require 'modules/mailpoet-signup.php';
+include('modules'.DIRECTORY_SEPARATOR.'mailpoet-signup.php') ;
 
 
 /**
