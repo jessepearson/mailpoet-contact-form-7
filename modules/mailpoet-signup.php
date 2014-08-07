@@ -139,7 +139,7 @@ function wpcf7_add_tag_generator_mailpoetsignup() {
 		'wpcf7-tg-pane-mailpoetsignup', 'wpcf7_tg_pane_mailpoetsignup' );
 }
 
-function wpcf7_tg_pane_mailpoetsignup( &$contact_form ) {
+function wpcf7_tg_pane_mailpoetsignup( $contact_form ) {
 	?>
 	<div id="wpcf7-tg-pane-mailpoetsignup" class="hidden">
 	<form action="">
