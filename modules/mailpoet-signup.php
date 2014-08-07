@@ -203,11 +203,29 @@ function wpcf7_mailpoet_before_send_mail( $contactform ) {
 		return;
 	}
 
-	// and make sure they have something in their contact form
-	if ( empty( $contactform->posted_data ) || ! empty( $contactform->skip_mail ) ) {
+	if (! empty( $contactform->skip_mail )) {
 		return;
 	}
 
+	$posted_data = null;
+	if ( class_exists( 'WPCF7_Submission' ) ) {// for Contact-Form-7 3.9 and above, http://contactform7.com/2014/07/02/contact-form-7-39-beta/
+		$submission = WPCF7_Submission::get_instance();
+		if ( $submission ) {
+			$posted_data = $submission->get_posted_data();
+		}
+	} elseif ( ! empty( $contactform->posted_data ) ) {// for Contact-Form-7 older than 3.9
+		$posted_data = $contactform->posted_data;
+	}
+
+	// and make sure they have something in their contact form
+	if ( empty($posted_data)) {
+		return;
+	}
+
+	wpcf7_mailpoet_subscribe_to_lists( $posted_data );
+}
+
+function wpcf7_mailpoet_subscribe_to_lists($posted_data) {
 	// set defaults for mailpoet user data
 	$user_data = array(
 		'email' => "",
@@ -216,7 +234,6 @@ function wpcf7_mailpoet_before_send_mail( $contactform ) {
 	);
 
 	// get form data
-	$posted_data = $contactform->posted_data;
 	$user_data['email'] = isset( $posted_data['your-email'] ) ? trim( $posted_data['your-email'] ) : '';
 	$user_data['firstname'] = isset( $posted_data['your-name'] ) ? trim( $posted_data['your-name'] ) : '';
 	if ( isset( $posted_data['your-first-name'] ) && !empty( $posted_data['your-first-name'] ) ) {
@@ -240,7 +257,6 @@ function wpcf7_mailpoet_before_send_mail( $contactform ) {
 		$mailpoet_lists = array();
 	}
 
-
 	// configure the list
 	$data = array(
 		'user' => $user_data,
@@ -249,11 +265,11 @@ function wpcf7_mailpoet_before_send_mail( $contactform ) {
 
 	// if akismet is set make sure it's valid
 	$akismet = isset( $contactform->akismet ) ? (array) $contactform->akismet : null;
+	$akismet = $akismet;// temporarily, not in use!
 
 	// add the subscriber to the Wysija list
-	$userHelper=&WYSIJA::get('user','helper');
-	$userHelper->addSubscriber($data);
-
+	$user_helper = WYSIJA::get('user','helper');
+	$user_helper->addSubscriber( $data );
 }
 
 
