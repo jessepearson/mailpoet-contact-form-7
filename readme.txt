@@ -3,7 +3,7 @@ Contributors: bftrick, wysija
 Donate link: http://www.patrickrauland.com
 Tags: form, forms, contact form, mailpoet, wysija, contact form 7, newsletters, email
 Requires at least: 3.7.1
-Tested up to: 3.3.1
+Tested up to: 3.9.1
 Stable tag: 1.0.3
 
 License: GPLv2 or later
