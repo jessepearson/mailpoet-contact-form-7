@@ -1,10 +1,10 @@
 === Mailpoet - Contact Form 7 Integration ===
-Contributors: bftrick, wysija
+Contributors: bftrick, wysija, jessepearson
 Donate link: http://www.patrickrauland.com
 Tags: form, forms, contact form, mailpoet, wysija, contact form 7, newsletters, email
 Requires at least: 3.7.1
 Tested up to: 3.9.2
-Stable tag: 1.0.7.1
+Stable tag: 1.0.7.2
 
 License: GPLv2 or later
 
@@ -15,7 +15,7 @@ MailPoet is a free newsletter and post notification plugin for WordPress that ma
 
 Please see the extensive installation / setup instructions to set up your form correctly.
 
-Feel free to add feature requests or bugs to [our GitHub page](https://github.com/BFTrick/mailpoet-contact-form-7). Support requests should go in the support forum.
+Feel free to add feature requests or bugs to [our GitHub page](https://github.com/jessepearson/mailpoet-contact-form-7). Support requests should go in the support forum.
 
 = Features =
 
@@ -53,6 +53,11 @@ After installing & activating the plugin it's time to set up your form.
 
 
 == Changelog ==
+= 1.0.7.2 =
+* Fixed number field conflict. 
+* Added code notes.
+* Updated screenshot-2.png
+
 = 1.0.7.1 =
 * Fixed directory errors.
 

@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * MailPoet - Contact Form 7 Integration
  *
  * Add the mailpoet cf7 shortcode
@@ -20,84 +20,94 @@ function wpcf7_add_shortcode_mailpoetsignup() {
 
 function wpcf7_mailpoetsignup_shortcode_handler( $tag ) {
 
-	if( ! class_exists( WPCF7_Shortcode ) )
+	// if cf7 is not active, leave
+	if( ! class_exists( 'WPCF7_Shortcode' ) )
 		return;
 
+	// create a new tag
 	$tag = new WPCF7_Shortcode( $tag );
 
-	if ( empty( $tag->name ) ) {
+	// if the tag doesn't have a name, return empty handed
+	if( empty( $tag->name ) ) 
 		return '';
-	}
 
+	// check for errors and set the class
 	$validation_error = wpcf7_get_validation_error( $tag->name );
-
 	$class = wpcf7_form_controls_class( $tag->type );
 
-	if ( $validation_error ) {
+	// if there were errors, add class
+	if( $validation_error )
 		$class .= ' wpcf7-not-valid';
-	}
 
-	$atts = array();
-
-	$atts['class'] = $tag->get_class_option( $class );
-	$atts['id'] = $tag->get_option( 'id', 'id', true );
+	// init the atts array, add the class and id set in the shortcode
+	$atts 				= array();
+	$atts[ 'class' ]	= $tag->get_class_option( $class );
+	$atts[ 'id' ]		= $tag->get_option( 'id', 'id', true );
 
 	// get checkbox value
 	// first get all of the lists
 	$lists = wpcf7_mailpoetsignup_get_lists();
-	if ( ! empty ( $lists ) ) {
+	if( ! empty( $lists ) ) {
+
 		$checkbox_values = array();
-		foreach ( $lists as $key => $l ) {
+
+		// go through each list
+		foreach( $lists as $key => $l ) {
+
 			// check if that list was added to the form
-			if ( $tag->has_option( 'mailpoet_list_' . $l['list_id'] ) ) {
-				// add the list id into the array of checkbox values
-				$checkbox_values[] = $l['list_id'];
+			if( $tag->has_option( 'mailpoet_list_' . $l[ 'list_id' ] ) ) {
+
+				// add the list into the array of checkbox values
+				$checkbox_values[] = 'mailpoet_list_'. $l[ 'list_id' ];
 			}
 		}
 	}
 
-	// we still want a value for the checkbox so *some* data gets posted
-	if ( ! empty ( $checkbox_values ) ) {
-		// now implode them all into a comma separated string
-		$atts['value'] = implode( $checkbox_values, "," );
+	// do we have any lists?
+	if( ! empty ( $checkbox_values ) ) {
+
+		// implode them all into a comma separated string
+		$atts[ 'value' ] = implode( $checkbox_values, ',' );
+
 	} else {
+
+		// we apparently have no lists
 		// set a 0 so we know to add the user to Mailpoet but not to any specific list
-		$atts['value'] = "0";
+		$atts[ 'value' ] = '0';
 	}
 
-
-	if ( $tag->is_required() ) {
-		$atts['aria-required'] = 'true';
-	}
+	// is it required?
+	if( $tag->is_required() )
+		$atts[ 'aria-required' ] = 'true';
 
 	// set default checked state
-	$atts['checked'] = "";
-	if ( $tag->has_option( 'default:on' ) ) {
-		$atts['checked'] = 'checked';
-	}
+	$atts[ 'checked' ] = ( $tag->has_option( 'default:on' ) ) ? 'checked' : '';
 
+	// default tag value
 	$value = (string) reset( $tag->values );
 
-	if ( '' !== $tag->content ) {
+	// if the tag has a default value, add it
+	if( '' !== $tag->content )
 		$value = $tag->content;
-	}
 
-	if ( wpcf7_is_posted() && isset( $_POST[$tag->name] ) ) {
-		$value = stripslashes_deep( $_POST[$tag->name] );
-	}
+	// if the tag has a posted value, add it
+	if ( wpcf7_is_posted() && isset( $_POST[ $tag->name ] ) )
+		$value = stripslashes_deep( $_POST[ $tag->name ] );
+	
+	// set the name and the id of the field
+	$atts[ 'name' ]	= $tag->name;
+	$id 			= ( ! empty( $atts[ 'id' ] ) ) ? $atts[ 'id' ] : $atts[ 'name' ];
 
-	$atts['name'] = $tag->name;
-	$id = ( ! empty( $atts['id'] ) ) ? $atts['id'] : $atts['name'];
-
+	// put all of the atts into a string for the field
 	$atts = wpcf7_format_atts( $atts );
 
 	// get the content from the tag to make the checkbox label
-	$label = __( 'Sign up for the newsletter', 'mpcf7' );
+	$label 	= __( 'Sign up for the newsletter', 'mpcf7' );
 	$values = $tag->values;
-	if( isset( $values ) && !empty ($values) ){
+	if( isset( $values ) && ! empty( $values ) )
 		$label = esc_textarea( $values[0] );
-	}
 
+	// create the field
 	$html = sprintf(
 		'<span class="wpcf7-form-control-wrap %1$s"><input type="checkbox" %2$s />&nbsp;</span><label for="%3$s">%4$s</label>&nbsp;%5$s',
 		$tag->name, $atts, $id, $value, $validation_error );
@@ -113,7 +123,7 @@ add_filter( 'wpcf7_validate_mailpoetsignup*', 'wpcf7_mailpoetsignup_validation_f
 
 function wpcf7_mailpoetsignup_validation_filter( $result, $tag ) {
 
-	if( ! class_exists( WPCF7_Shortcode ) )
+	if( ! class_exists( 'WPCF7_Shortcode' ) )
 		return;
 
 	$tag = new WPCF7_Shortcode( $tag );
@@ -140,7 +150,7 @@ add_action( 'admin_init', 'wpcf7_add_tag_generator_mailpoetsignup', 20 );
 
 function wpcf7_add_tag_generator_mailpoetsignup() {
 
-	if( ! class_exists( WPCF7_TagGenerator ) )
+	if( ! class_exists( 'WPCF7_TagGenerator' ) )
 		return;
 
 	$tag_generator = WPCF7_TagGenerator::get_instance();
@@ -286,9 +296,11 @@ function wpcf7_mailpoet_subscribe_to_lists($posted_data) {
 	$mailpoet_lists   = array( );
 	if (!empty($mailpoet_signups)) {
 		foreach ($mailpoet_signups as $mailpoet_signup_field) {
-			$_field = trim($posted_data[$mailpoet_signup_field]);
+			
+			$_field = str_replace( 'mailpoet_list_', '', trim( $posted_data[ $mailpoet_signup_field ] ) );
+
 			if (!empty($_field)) {
-				$mailpoet_lists = array_unique(array_merge($mailpoet_lists, explode(",", $posted_data[$mailpoet_signup_field])));
+				$mailpoet_lists = array_unique( array_merge( $mailpoet_lists, explode( ',', $_field ) ) );
 			}
 		}
 	}
@@ -355,10 +367,13 @@ add_filter( 'wpcf7_mail_tag_replaced', 'wpcf7_mail_tag_replaced_mailpoetsignup',
  * @return string
  */
 function wpcf7_mail_tag_replaced_mailpoetsignup($replaced, $submitted) {
+
 	if (wpcf7_is_mailpoetsignup_element($submitted)) {
+
 		$list_names = wpcf7_get_list_names(explode(',', $submitted));
 		$replaced = implode(', ', $list_names);
 	}
+
 	return $replaced;
 }
 
@@ -382,28 +397,47 @@ function wpcf7_get_list_names(Array $list_ids = array()) {
 
 /**
  * Make sure the current element is mailpoetsignup
- * @param string $submitted submitted value from contact form
- * @return boolean
+ * @param 	string $submitted submitted value from contact form
+ * @return 	boolean
  */
-function wpcf7_is_mailpoetsignup_element($submitted) {
-	if ( class_exists( 'WPCF7_Submission' ) ) {// for Contact-Form-7 3.9 and above, http://contactform7.com/2014/07/02/contact-form-7-39-beta/
+function wpcf7_is_mailpoetsignup_element( $submitted ) {
+
+	// for Contact-Form-7 3.9 and above, http://contactform7.com/2014/07/02/contact-form-7-39-beta/
+	if( class_exists( 'WPCF7_Submission' ) ) {
+
+		// get the submission object
 		$submission = WPCF7_Submission::get_instance();
-		if ( $submission ) {
+
+		// if there's an object, get the posted data
+		if( $submission )
 			$posted_data = $submission->get_posted_data();
-		}
+
 	} else {
+
+		// if they are on an old version of cf7, get straight _POST data
 		$posted_data = $_POST;
 	}
-	if (!empty($posted_data)) {
+
+	// if we have data
+	if( ! empty( $posted_data ) ) {
+
 		// find all of the keys in $posted_data that belong to mailpoet-cf7's plugin
-		$keys			 = array_keys($posted_data);
-		$mailpoet_signups = preg_grep("/^mailpoetsignup.*/", $keys);
-		if (!empty($mailpoet_signups)) {
-			foreach ($mailpoet_signups as $mailpoet_signup_field) {
-				$_field = trim($posted_data[$mailpoet_signup_field]);
-				if ($_field == $submitted) {
+		$keys 				= array_keys( $posted_data );
+		$mailpoet_signups 	= preg_grep( '/^mailpoetsignup.*/', $keys );
+
+		// if we have posted fields
+		if( ! empty( $mailpoet_signups ) ) {
+
+			// go through each one
+			foreach( $mailpoet_signups as $mailpoet_signup_field ) {
+
+				// get the value
+				$_field = trim( $posted_data[ $mailpoet_signup_field ] );
+
+				// and see if it matches
+				if( $_field == $submitted )
 					return true;
-				}
+
 			}
 		}
 	}
