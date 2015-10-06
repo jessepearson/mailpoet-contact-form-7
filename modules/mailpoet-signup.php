@@ -91,7 +91,7 @@ function wpcf7_mailpoetsignup_shortcode_handler( $tag ) {
 		$value = $tag->content;
 
 	// if the tag has a posted value, add it
-	if ( wpcf7_is_posted() && isset( $_POST[ $tag->name ] ) )
+	if( wpcf7_is_posted() && isset( $_POST[ $tag->name ] ) )
 		$value = stripslashes_deep( $_POST[ $tag->name ] );
 	
 	// set the name and the id of the field
@@ -123,20 +123,29 @@ add_filter( 'wpcf7_validate_mailpoetsignup*', 'wpcf7_mailpoetsignup_validation_f
 
 function wpcf7_mailpoetsignup_validation_filter( $result, $tag ) {
 
+	// make sure that CF7 is installed and active
 	if( ! class_exists( 'WPCF7_Shortcode' ) )
 		return;
 
+	// 
 	$tag = new WPCF7_Shortcode( $tag );
 
+	// get the type and name
 	$type = $tag->type;
 	$name = $tag->name;
 
-	$value = isset( $_POST[$name] ) ? (string) $_POST[$name] : '';
+	// if the tag was posted, set it
+	$value = isset( $_POST[ $name ] ) ? ( string ) $_POST[ $name ] : '';
 
-	if ( 'mailpoetsignup*' == $type ) {
-		if ( '' == $value ) {
-			$result['valid'] = false;
-			$result['reason'][$name] = wpcf7_get_message( 'invalid_required' );
+	// if it's required
+	if( 'mailpoetsignup*' == $type ) {
+
+		// and empty
+		if( '' == $value ) {
+
+			// then fail it
+			$result[ 'valid' ] = false;
+			$result[ 'reason' ][ $name ] = wpcf7_get_message( 'invalid_required' );
 		}
 	}
 
@@ -196,28 +205,28 @@ function wpcf7_tg_pane_mailpoetsignup( $contact_form, $args = '' ) {
 					</tr>
 
 					<tr>
-						<th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-default:on' ); ?>"><?php echo esc_html( __( 'Checked by Default', 'contact-form-7' ) ); ?></label></th>
+						<th scope="row"><label for="<?php echo esc_attr( $args[ 'content' ] . '-default:on' ); ?>"><?php echo esc_html( __( 'Checked by Default', 'contact-form-7' ) ); ?></label></th>
 						<td><input type="checkbox" name="default:on" class="option" />&nbsp;<?php echo esc_html( __( "Make this checkbox checked by default?", 'contact-form-7' ) ); ?></td>
 					</tr>
 
 					<tr>
-						<th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-values' ); ?>"><?php echo esc_html( __( 'Checkbox Label', 'contact-form-7' ) ); ?></label></th>
-						<td><input type="text" name="values" class="oneline" id="<?php echo esc_attr( $args['content'] . '-values' ); ?>" /><br />
+						<th scope="row"><label for="<?php echo esc_attr( $args[ 'content' ] . '-values' ); ?>"><?php echo esc_html( __( 'Checkbox Label', 'contact-form-7' ) ); ?></label></th>
+						<td><input type="text" name="values" class="oneline" id="<?php echo esc_attr( $args[ 'content' ] . '-values' ); ?>" /><br />
 					</tr>
 
 					<tr>
-						<th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-name' ); ?>"><?php echo esc_html( __( 'Name', 'contact-form-7' ) ); ?></label></th>
-						<td><input type="text" name="name" class="tg-name oneline" id="<?php echo esc_attr( $args['content'] . '-name' ); ?>" /></td>
+						<th scope="row"><label for="<?php echo esc_attr( $args[ 'content' ] . '-name' ); ?>"><?php echo esc_html( __( 'Name', 'contact-form-7' ) ); ?></label></th>
+						<td><input type="text" name="name" class="tg-name oneline" id="<?php echo esc_attr( $args[ 'content' ] . '-name' ); ?>" /></td>
 					</tr>
 
 					<tr>
-						<th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-id' ); ?>"><?php echo esc_html( __( 'Id attribute', 'contact-form-7' ) ); ?></label></th>
-						<td><input type="text" name="id" class="idvalue oneline option" id="<?php echo esc_attr( $args['content'] . '-id' ); ?>" /></td>
+						<th scope="row"><label for="<?php echo esc_attr( $args[ 'content' ] . '-id' ); ?>"><?php echo esc_html( __( 'Id attribute', 'contact-form-7' ) ); ?></label></th>
+						<td><input type="text" name="id" class="idvalue oneline option" id="<?php echo esc_attr( $args[ 'content' ] . '-id' ); ?>" /></td>
 					</tr>
 
 					<tr>
-					<th scope="row"><label for="<?php echo esc_attr( $args['content'] . '-class' ); ?>"><?php echo esc_html( __( 'Class attribute', 'contact-form-7' ) ); ?></label></th>
-					<td><input type="text" name="class" class="classvalue oneline option" id="<?php echo esc_attr( $args['content'] . '-class' ); ?>" /></td>
+					<th scope="row"><label for="<?php echo esc_attr( $args[ 'content' ] . '-class' ); ?>"><?php echo esc_html( __( 'Class attribute', 'contact-form-7' ) ); ?></label></th>
+					<td><input type="text" name="class" class="classvalue oneline option" id="<?php echo esc_attr( $args[ 'content' ] . '-class' ); ?>" /></td>
 					</tr>
 
 				</tbody>
@@ -234,7 +243,7 @@ function wpcf7_tg_pane_mailpoetsignup( $contact_form, $args = '' ) {
 
 		<br class="clear" />
 
-		<p class="description mail-tag"><label for="<?php echo esc_attr( $args['content'] . '-mailtag' ); ?>"><?php echo sprintf( esc_html( __( "To use the value input through this field in a mail field, you need to insert the corresponding mail-tag (%s) into the field on the Mail tab.", 'contact-form-7' ) ), '<strong><span class="mail-tag"></span></strong>' ); ?><input type="text" class="mail-tag code hidden" readonly="readonly" id="<?php echo esc_attr( $args['content'] . '-mailtag' ); ?>" /></label></p>
+		<p class="description mail-tag"><label for="<?php echo esc_attr( $args[ 'content' ] . '-mailtag' ); ?>"><?php echo sprintf( esc_html( __( "To use the value input through this field in a mail field, you need to insert the corresponding mail-tag (%s) into the field on the Mail tab.", 'contact-form-7' ) ), '<strong><span class="mail-tag"></span></strong>' ); ?><input type="text" class="mail-tag code hidden" readonly="readonly" id="<?php echo esc_attr( $args[ 'content' ] . '-mailtag' ); ?>" /></label></p>
 	</div>
 
 	<?php
@@ -245,81 +254,96 @@ function wpcf7_tg_pane_mailpoetsignup( $contact_form, $args = '' ) {
 add_action( 'wpcf7_before_send_mail', 'wpcf7_mailpoet_before_send_mail' );
 
 function wpcf7_mailpoet_before_send_mail( $contactform ) {
-	// make sure the user has Mailpoet (Wysija) installed & active
-	if ( ! ( class_exists( 'WYSIJA' ) ) ) {
-		return;
-	}
 
-	if (! empty( $contactform->skip_mail )) {
+	// make sure the user has Mailpoet (Wysija) and CF7 installed & active
+	if( ! class_exists( 'WYSIJA' ) || ! class_exists( 'WPCF7_Submission' )  )
 		return;
-	}
 
+	// 
+	if( ! empty( $contactform->skip_mail ) )
+		return;
+
+	// 
 	$posted_data = null;
-	if ( class_exists( 'WPCF7_Submission' ) ) {// for Contact-Form-7 3.9 and above, http://contactform7.com/2014/07/02/contact-form-7-39-beta/
-		$submission = WPCF7_Submission::get_instance();
-		if ( $submission ) {
-			$posted_data = $submission->get_posted_data();
-		}
-	} elseif ( ! empty( $contactform->posted_data ) ) {// for Contact-Form-7 older than 3.9
-		$posted_data = $contactform->posted_data;
-	}
+		
+	// get the instance that was submitted and the posted data
+	$submission 	= WPCF7_Submission::get_instance();
+	$posted_data 	= ( $submission ) ? $submission->get_posted_data() : null;
 
 	// and make sure they have something in their contact form
-	if ( empty($posted_data)) {
+	if( empty( $posted_data ) )
 		return;
-	}
 
-	wpcf7_mailpoet_subscribe_to_lists( $posted_data );
+	// get the tags that are in the form
+	$manager 		= WPCF7_ShortcodeManager::get_instance();
+	$scanned_tags 	= $manager->get_scanned_tags();
+
+	// let's go add the user
+	wpcf7_mailpoet_subscribe_to_lists( $posted_data, $scanned_tags );
 }
 
-function wpcf7_mailpoet_subscribe_to_lists($posted_data) {
+function wpcf7_mailpoet_subscribe_to_lists( $posted_data, $scanned_tags = array() ) {
+
 	// set defaults for mailpoet user data
 	$user_data = array(
-		'email'	 => "",
-		'firstname' => "",
-		'lastname'  => ""
+		'email'		=> '',
+		'firstname' => '',
+		'lastname'  => ''
 	);
 
 	// get form data
-	$user_data['email']	 = isset($posted_data['your-email']) ? trim($posted_data['your-email']) : '';
-	$user_data['firstname'] = isset($posted_data['your-name']) ? trim($posted_data['your-name']) : '';
-	if (isset($posted_data['your-first-name']) && !empty($posted_data['your-first-name'])) {
-		$user_data['firstname'] = trim($posted_data['your-first-name']);
-	}
-	if (isset($posted_data['your-last-name']) && !empty($posted_data['your-last-name'])) {
-		$user_data['lastname'] = trim($posted_data['your-last-name']);
+	$user_data[ 'email' ]		= isset( $posted_data[ 'your-email' ] ) ? trim( $posted_data[ 'your-email' ] ) : '';
+	$user_data[ 'firstname' ]	= isset( $posted_data[ 'your-name' ] )	? trim( $posted_data[ 'your-name' ] ) : '';
+	if( isset( $posted_data[ 'your-first-name' ] ) && ! empty( $posted_data[ 'your-first-name' ] ) )
+		$user_data[ 'firstname' ] = trim( $posted_data[ 'your-first-name' ] );
+	
+	if( isset( $posted_data[ 'your-last-name' ] ) && ! empty( $posted_data[ 'your-last-name' ] ) )
+		$user_data[ 'lastname' ] = trim( $posted_data[ 'your-last-name' ] );
+	
+	// set up our arrays
+	$mailpoet_signups 	= array();
+	$mailpoet_lists   	= array();
+
+	// go through each tag and find our tags
+	foreach( $scanned_tags as $tag ) {
+
+		// if it's our tag, add it to the array
+		if( $tag[ 'basetype' ] == 'mailpoetsignup' )
+			$mailpoet_signups[] = $tag[ 'name' ];
 	}
 
-	// find all of the keys in $posted_data that belong to mailpoet-cf7's plugin
-	$keys			 = array_keys($posted_data);
-	$mailpoet_signups = preg_grep("/^mailpoetsignup.*/", $keys);
-	$mailpoet_lists   = array( );
-	if (!empty($mailpoet_signups)) {
-		foreach ($mailpoet_signups as $mailpoet_signup_field) {
+	// if we have signup fields
+	if( ! empty( $mailpoet_signups ) ) {
+
+		// go through each field
+		foreach( $mailpoet_signups as $mailpoet_signup_field ) {
 			
+			// trim off our extra data
 			$_field = str_replace( 'mailpoet_list_', '', trim( $posted_data[ $mailpoet_signup_field ] ) );
 
-			if (!empty($_field)) {
+			// add the list id to the array
+			if( ! empty ( $_field ) )
 				$mailpoet_lists = array_unique( array_merge( $mailpoet_lists, explode( ',', $_field ) ) );
-			}
 		}
 	}
 
-	if (empty($mailpoet_lists)) {
+	// if we have no lists, exit
+	if( empty( $mailpoet_lists ) )
 		return;
-	}
+
 	// configure the list
 	$data = array(
-		'user'	  => $user_data,
+		'user'		=> $user_data,
 		'user_list' => array( 'list_ids' => $mailpoet_lists )
 	);
 
 	// if akismet is set make sure it's valid
-	$akismet = isset($contactform->akismet) ? (array)$contactform->akismet : null;
+	$akismet = isset( $contactform->akismet ) ? (array) $contactform->akismet : null;
 	$akismet = $akismet; // temporarily, not in use!
+
 	// add the subscriber to the Wysija list
-	$user_helper = WYSIJA::get('user', 'helper');
-	$user_helper->addSubscriber($data);
+	$user_helper = WYSIJA::get( 'user', 'helper' );
+	$user_helper->addSubscriber( $data );
 }
 
 
@@ -340,7 +364,7 @@ function wpcf7_mailpoetsignup_get_list_inputs ( ) {
 			// add input to returned html
 			$input_name = wpcf7_mailpoetsignup_get_list_input_field_name();
 			$input = "<input type='checkbox' name='" . $input_name . "' class='option' />%s<br />";
-			$html .= sprintf( $input, $l['list_id'], $l['name'] );
+			$html .= sprintf( $input, $l[ 'list_id' ], $l[ 'name' ] );
 		}
 	}
 
@@ -389,7 +413,7 @@ function wpcf7_get_list_names(Array $list_ids = array()) {
 		$model_list = WYSIJA::get('list','model');
 		$result = $model_list->get( array( 'name' ), array( 'list_id' =>  $list_ids) );
 		foreach ($result as $list) {
-			$mailpoet_lists[] = $list['name'];
+			$mailpoet_lists[] = $list[ 'name' ];
 		}
 	}
 	return $mailpoet_lists;
