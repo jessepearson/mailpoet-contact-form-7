@@ -4,7 +4,7 @@ Donate link: http://www.patrickrauland.com
 Tags: form, forms, contact form, mailpoet, wysija, contact form 7, newsletters, email
 Requires at least: 3.7.1
 Tested up to: 3.9.2
-Stable tag: 1.0.7.3
+Stable tag: 1.0.7.4
 
 License: GPLv2 or later
 
