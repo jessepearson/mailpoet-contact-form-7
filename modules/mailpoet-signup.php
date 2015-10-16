@@ -107,10 +107,21 @@ function wpcf7_mailpoetsignup_shortcode_handler( $tag ) {
 	if( isset( $values ) && ! empty( $values ) )
 		$label = esc_textarea( $values[0] );
 
-	// create the field
-	$html = sprintf(
-		'<span class="wpcf7-form-control-wrap %1$s"><input type="checkbox" %2$s />&nbsp;</span><label for="%3$s">%4$s</label>&nbsp;%5$s',
-		$tag->name, $atts, $id, $value, $validation_error );
+	// should the label be inside the span?
+	if( $tag->has_option( 'label-inside-span' ) ) {
+
+		// create the field
+		$html = sprintf(
+			'<span class="wpcf7-form-control-wrap %1$s"><input type="checkbox" %2$s />&nbsp;<label for="%3$s">%4$s</label></span>&nbsp;%5$s',
+			$tag->name, $atts, $id, $value, $validation_error );
+
+	} else {
+
+		// create the field
+		$html = sprintf(
+			'<span class="wpcf7-form-control-wrap %1$s"><input type="checkbox" %2$s />&nbsp;</span><label for="%3$s">%4$s</label>&nbsp;%5$s',
+			$tag->name, $atts, $id, $value, $validation_error );
+	}
 
 	return $html;
 }
@@ -212,6 +223,11 @@ function wpcf7_tg_pane_mailpoetsignup( $contact_form, $args = '' ) {
 					<tr>
 						<th scope="row"><label for="<?php echo esc_attr( $args[ 'content' ] . '-values' ); ?>"><?php echo esc_html( __( 'Checkbox Label', 'contact-form-7' ) ); ?></label></th>
 						<td><input type="text" name="values" class="oneline" id="<?php echo esc_attr( $args[ 'content' ] . '-values' ); ?>" /><br />
+					</tr>
+
+					<tr>
+						<th scope="row"><label for="<?php echo esc_attr( $args[ 'content' ] . '-label-inside-span' ); ?>"><?php echo esc_html( __( 'Label Inside Span', 'contact-form-7' ) ); ?></label></th>
+						<td><input type="checkbox" name="label-inside-span" class="option" />&nbsp;<?php echo esc_html( __( "Place the label inside the control wrap span?", 'contact-form-7' ) ); ?></td>
 					</tr>
 
 					<tr>
