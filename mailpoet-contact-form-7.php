@@ -7,7 +7,7 @@ Author: Jesse Pearson
 Author URI: https://jessepearson.net/
 Text Domain: mpcf7
 Domain Path: /languages/
-Version: 1.0.7.5
+Version: 1.0.7.6
 */
 
 // require the mailpoet signup field module

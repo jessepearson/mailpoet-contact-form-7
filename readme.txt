@@ -3,8 +3,8 @@ Contributors: jessepearson, bftrick, wysija
 Donate link: https://jessepearson.net/donate/
 Tags: form, forms, contact form, mailpoet, wysija, contact form 7, newsletters, email
 Requires at least: 3.7.1
-Tested up to: 4.3.1
-Stable tag: 1.0.7.5
+Tested up to: 4.4.2
+Stable tag: 1.0.7.6
 
 License: GPLv2 or later
 
