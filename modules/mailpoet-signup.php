@@ -91,8 +91,12 @@ function wpcf7_mailpoetsignup_shortcode_handler( $tag ) {
 		$value = $tag->content;
 
 	// if the tag has a posted value, add it
-	if( wpcf7_is_posted() && isset( $_POST[ $tag->name ] ) )
-		$value = stripslashes_deep( $_POST[ $tag->name ] );
+	if( wpcf7_is_posted() && isset( $_POST[ $tag->name ] ) ) {
+		// $value = stripslashes_deep( $_POST[ $tag->name ] );
+		$atts[ 'checked' ] = 'checked';
+	} elseif ( wpcf7_is_posted() && ! isset( $_POST[ $tag->name ] ) ) {
+		$atts[ 'checked' ] = '';
+	}
 	
 	// set the name and the id of the field
 	$atts[ 'name' ]	= $tag->name;
