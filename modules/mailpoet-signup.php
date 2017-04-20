@@ -12,8 +12,8 @@
 add_action( 'init', 'wpcf7_add_shortcode_mailpoetsignup', 5 );
 
 function wpcf7_add_shortcode_mailpoetsignup() {
-	if( function_exists('wpcf7_add_shortcode') ) {
-		wpcf7_add_shortcode( array( 'mailpoetsignup', 'mailpoetsignup*' ),
+	if( function_exists('wpcf7_add_form_tag') ) {
+		wpcf7_add_form_tag( array( 'mailpoetsignup', 'mailpoetsignup*' ),
 			'wpcf7_mailpoetsignup_shortcode_handler', true );
 	}
 }
@@ -21,11 +21,11 @@ function wpcf7_add_shortcode_mailpoetsignup() {
 function wpcf7_mailpoetsignup_shortcode_handler( $tag ) {
 
 	// if cf7 is not active, leave
-	if( ! class_exists( 'WPCF7_Shortcode' ) )
+	if( ! class_exists( 'WPCF7_FormTag' ) )
 		return;
 
 	// create a new tag
-	$tag = new WPCF7_Shortcode( $tag );
+	$tag = new WPCF7_FormTag( $tag );
 
 	// if the tag doesn't have a name, return empty handed
 	if( empty( $tag->name ) ) 
@@ -139,11 +139,11 @@ add_filter( 'wpcf7_validate_mailpoetsignup*', 'wpcf7_mailpoetsignup_validation_f
 function wpcf7_mailpoetsignup_validation_filter( $result, $tag ) {
 
 	// make sure that CF7 is installed and active
-	if( ! class_exists( 'WPCF7_Shortcode' ) )
+	if( ! class_exists( 'WPCF7_FormTag' ) )
 		return;
 
 	// 
-	$tag = new WPCF7_Shortcode( $tag );
+	$tag = new WPCF7_FormTag( $tag );
 
 	// get the type and name
 	$type = $tag->type;
@@ -295,7 +295,7 @@ function wpcf7_mailpoet_before_send_mail( $contactform ) {
 		return;
 
 	// get the tags that are in the form
-	$manager 		= WPCF7_ShortcodeManager::get_instance();
+	$manager 		= WPCF7_FormTagsManager::get_instance();
 	$scanned_tags 	= $manager->get_scanned_tags();
 
 	// let's go add the user
